@@ -1,0 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap');
+$body-font-family: 'Outfit', sans-serif;
+$card-border-radius: 6px;
+$card-border-width: 2px;
+$card-title-font-weight: 700;
+$card-elevation: 0;
+
+html {
+  overflow-y: auto;
+}
+::webkit-scrollbar {
+  display: none;
+}
