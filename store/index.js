@@ -1,6 +1,5 @@
 export const state = () => {
   return {
-    title: 'Dapilku',
     drawer: [
       {
         name: 'Dashboard',
@@ -8,19 +7,19 @@ export const state = () => {
         to: '/',
       },
       {
-        name: 'Kandidat',
+        name: 'Event Owner',
         icon: 'mdi-account-outline',
-        to: '/kandidat',
+        to: '/event-owner',
       },
       {
-        name: 'Relawan',
+        name: 'Panitia',
         icon: 'mdi-handshake-outline',
-        to: '/relawan',
+        to: '/panitia',
       },
       {
-        name: 'Calon Pemilih',
+        name: 'Peserta',
         icon: 'mdi-account-group-outline',
-        to: '/calon-pemilih',
+        to: '/peserta',
       },
     ],
   }
@@ -30,8 +29,4 @@ export const mutations = {}
 
 export const actions = {}
 
-export const getters = {
-  tampil: (state) => {
-    return state.title.toUpperCase()
-  },
-}
+export const getters = {}

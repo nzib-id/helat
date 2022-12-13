@@ -3,7 +3,7 @@ import colors from 'vuetify/es5/util/colors'
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s',
+    titleTemplate: '%s - Event Organizer',
     title: 'EO',
     meta: [
       { charset: 'utf-8' },
@@ -18,7 +18,7 @@ export default {
   css: [],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [],
+  plugins: ['~/plugins/vue-toast-notification.js'],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -34,10 +34,10 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseURL: 'http://18.183.83.204/',
+    baseURL: 'http://18.183.83.204',
   },
   router: {
-    middleware: 'auth',
+    middleware: ['auth'],
   },
   auth: {
     redirect: {
@@ -47,18 +47,27 @@ export default {
     },
     strategies: {
       local: {
+        tokenRequired: true,
         token: {
-          type: 'bearer',
+          name: 'Authorization',
+          property: 'access_token',
+          type: 'Bearer',
           required: true,
           global: true,
-        },
-        user: {
-          property: 'user',
+          maxAge: 1800,
         },
         endpoints: {
-          login: { url: '/auth/access-token', method: 'post' },
+          login: {
+            url: '/auth/access-token',
+            method: 'post',
+          },
           logout: { url: '/auth/access-token', method: 'post' },
           user: { url: '/users/me', method: 'get' },
+          candidates: { url: '/candidates/me', method: 'get' },
+        },
+        user: {
+          property: false,
+          autoFetch: true,
         },
       },
     },
@@ -86,14 +95,6 @@ export default {
           warning: colors.amber.base,
           error: colors.deepOrange.accent4,
           success: '#16C098',
-        },
-      },
-      icons: {
-        sizes: {
-          xs: 8,
-          sm: 16,
-          md: 24,
-          lg: 32,
         },
       },
     },

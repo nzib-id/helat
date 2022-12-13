@@ -2,24 +2,24 @@ export const state = () => {
   return {
     items: [
       {
-        name: 'Kandidat',
+        name: 'Event Owner',
         value: 3,
         type: 'orang',
       },
       {
-        name: 'Relawan',
+        name: 'Panitia',
         value: 29,
         type: 'orang',
       },
       {
-        name: 'Calon Pemilih',
+        name: 'Peserta',
         value: 3342,
         type: 'orang',
       },
       {
-        name: 'Kampanye',
+        name: 'Event',
         value: 27,
-        type: 'kampanye',
+        type: 'Events',
       },
     ],
   }

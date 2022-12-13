@@ -3,14 +3,16 @@
     <v-list style="height: 50%">
       <v-list-item class="my-5">
         <v-avatar class="white--text mr-2" color="primary" size="48">
-          SA
+          <v-img src="https://i.pravatar.cc/900"></v-img>
         </v-avatar>
         <v-list-item-content>
-          <v-list-item-title class="subtitle-1 font-weight-bold">
-            SuperAdmin
+          <v-list-item-title
+            class="subtitle-1 text-capitalize font-weight-bold"
+          >
+            {{ name }}
           </v-list-item-title>
           <v-list-item-subtitle class="caption secondary--text">
-            Dapilku Manager
+            EO Manager
           </v-list-item-subtitle>
         </v-list-item-content>
         <v-list-item-action>
@@ -60,12 +62,17 @@
 <script>
 export default {
   data() {
-    return {}
+    return {
+      name: '',
+    }
   },
   computed: {
     drawer() {
       return this.$store.state.drawer
     },
+  },
+  mounted() {
+    this.name = this.$auth.user.name
   },
 }
 </script>

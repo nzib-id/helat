@@ -4,4 +4,6 @@
   </v-card>
 </template>
 
-<script></script>
+<script>
+export default {}
+</script>

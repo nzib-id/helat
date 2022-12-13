@@ -17,8 +17,8 @@
               {{ item.name }} </v-avatar
             >{{ item.name }}
           </td>
-          <td>{{ item.dapil }}</td>
-          <td>{{ item.kampanye }}</td>
+          <td>{{ item.eo }}</td>
+          <td>{{ item.event }}</td>
           <td>{{ item.budget }}</td>
           <td>
             <v-btn
@@ -39,45 +39,31 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   data() {
     return {
       headers: [
         { text: 'Nama', value: 'name' },
-        { text: 'Dapil', value: 'dapil' },
-        { text: 'Kampanye', value: 'kampanye' },
+        { text: 'EO', value: 'EO' },
+        { text: 'Event', value: 'Event' },
         { text: 'Budget', value: 'budget' },
         { text: 'Status', value: 'status' },
       ],
       items: [
         {
           name: 'Jajang Nurjaman',
-          dapil: 'IV Jawa Barat',
-          kampanye: '10',
+          eo: 'IV Jawa Barat',
+          event: '10',
           budget: '100%',
-          status: 'approved',
-        },
-        {
-          name: 'Udin Saepudin',
-          dapil: 'V Jawa Barat',
-          kampanye: '7',
-          budget: '95%',
-          status: 'unapproved',
-        },
-        {
-          name: 'Leo Markus',
-          dapil: 'II Jawa Barat',
-          kampanye: '10',
-          budget: '89%',
           status: 'approved',
         },
       ],
     }
   },
-  computed: {
-    title() {
-      return this.$store.state.kandidat.title
-    },
+  mounted() {
+    this.items.name = this.$auth.user.name
   },
 }
 </script>

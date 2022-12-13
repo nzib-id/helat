@@ -11,3 +11,12 @@ html {
 ::webkit-scrollbar {
   display: none;
 }
+
+.v-toast {
+  font-family: $body-font-family;
+  font-weight: bold;
+}
+
+a:hover {
+  opacity: 0.75;
+}

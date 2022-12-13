@@ -1,6 +1,6 @@
 export const state = () => {
   return {
-    title: 'Kandidat',
+    title: 'event-owner',
   }
 }
 

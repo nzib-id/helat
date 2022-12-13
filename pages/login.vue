@@ -9,11 +9,14 @@
       <v-form class="d-flex flex-column">
         <v-row justify="center">
           <v-col cols="7">
-            <v-text-field large placeholder="Email" v-model="form.email">
+            <v-text-field placeholder="Username" v-model="form.username">
             </v-text-field>
             <v-text-field
               placeholder="Password"
               v-model="form.password"
+              :type="hide ? 'password' : 'text'"
+              :append-icon="hide ? 'mdi-eye-off' : 'mdi-eye'"
+              @click:append="hide = !hide"
             ></v-text-field>
             <v-btn
               color="primary"
@@ -21,6 +24,7 @@
               large
               depressed
               block
+              @click="login()"
             >
               Login
             </v-btn>
@@ -49,13 +53,42 @@ import google from '~/components/icons/google.vue'
 export default {
   name: 'loginPage',
   layout: 'auth',
+  components: { google },
   data() {
     return {
+      hide: true,
       form: {
-        email: '',
+        username: '',
         password: '',
       },
     }
+  },
+  methods: {
+    async login() {
+      try {
+        const params = new FormData()
+        params.append('username', this.form.username)
+        params.append('password', this.form.password)
+
+        const login = await this.$auth.loginWith('local', {
+          data: params,
+        })
+        this.$toast.success('Halo, ' + this.$auth.user.name)
+      } catch (error) {
+        if (error.response.status === 400) {
+          this.$toast.error('Password atau username salah')
+        }
+      }
+    },
+  },
+  mounted() {
+    let input = document.querySelector('form')
+    input.addEventListener('keypress', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault()
+        this.login()
+      }
+    })
   },
   computed: {},
   components: {
