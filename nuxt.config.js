@@ -30,12 +30,40 @@ export default {
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
-  modules: ['@nuxtjs/axios', '@nuxtjs/auth-next', '@nuxtjs/pwa'],
+  modules: [
+    '@nuxtjs/axios',
+    '@nuxtjs/auth-next',
+    '@nuxtjs/pwa',
+    '@nuxtjs/proxy',
+  ],
+  proxy: {
+    '/api': {
+      target: 'https://event.pinisi.io',
+      pathRewrite: {
+        '^/api': '/',
+      },
+    },
+  },
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseURL: 'http://18.183.83.204',
+    proxy: true,
+    header: {
+      common: {
+        Accept:
+          'application/json, text/plain, application/x-www-form-urlencoded, */*',
+      },
+      delete: {},
+      get: {},
+      head: {},
+      post: {},
+      put: {},
+      patch: {},
+    },
   },
+
+  loading: false,
+
   router: {
     middleware: ['auth'],
   },
@@ -58,12 +86,12 @@ export default {
         },
         endpoints: {
           login: {
-            url: '/auth/access-token',
+            url: '/api' + '/auth/access-token',
             method: 'post',
           },
-          logout: { url: '/auth/access-token', method: 'post' },
-          user: { url: '/users/me', method: 'get' },
-          candidates: { url: '/candidates/me', method: 'get' },
+          logout: { url: '/api' + '/auth/access-token', method: 'post' },
+          user: { url: '/api' + '/users/me', method: 'get' },
+          candidates: { url: '/api' + '/candidates/', method: 'get' },
         },
         user: {
           property: false,

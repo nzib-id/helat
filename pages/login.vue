@@ -25,6 +25,7 @@
               depressed
               block
               @click="login()"
+              :loading="loading"
             >
               Login
             </v-btn>
@@ -34,7 +35,13 @@
           <v-card-title class="text--disabled">- Atau -</v-card-title>
         </v-row>
         <v-row justify="center">
-          <v-btn class="rounded-lg pa-0 ma-0" depressed outlined x-large>
+          <v-btn
+            class="rounded-lg pa-0 ma-0"
+            disabled
+            depressed
+            outlined
+            x-large
+          >
             <v-row class="pa-5" justify="center" align="center">
               <v-col cols="2"><google /></v-col>
               <v-col class="subtitle-1 text-none" cols="10">
@@ -57,6 +64,7 @@ export default {
   data() {
     return {
       hide: true,
+      loading: false,
       form: {
         username: '',
         password: '',
@@ -69,10 +77,11 @@ export default {
         const params = new FormData()
         params.append('username', this.form.username)
         params.append('password', this.form.password)
-
-        const login = await this.$auth.loginWith('local', {
+        this.loading = true
+        await this.$auth.loginWith('local', {
           data: params,
         })
+        this.loading = false
         this.$toast.success('Halo, ' + this.$auth.user.name)
       } catch (error) {
         if (error.response.status === 400) {

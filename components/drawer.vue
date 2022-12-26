@@ -2,8 +2,8 @@
   <v-navigation-drawer permanent height="100%" width="100%">
     <v-list style="height: 50%">
       <v-list-item class="my-5">
-        <v-avatar class="white--text mr-2" color="primary" size="48">
-          <v-img src="https://i.pravatar.cc/900"></v-img>
+        <v-avatar class="mr-2" size="48">
+          <v-img :lazy-src="profic" :src="profic"></v-img>
         </v-avatar>
         <v-list-item-content>
           <v-list-item-title
@@ -64,6 +64,7 @@ export default {
   data() {
     return {
       name: '',
+      profic: require('@/static/images/admin.jpg'),
     }
   },
   computed: {

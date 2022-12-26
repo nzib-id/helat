@@ -9,22 +9,17 @@
               height="167"
               elevation="3"
               rounded="xl"
+              active-class=""
             >
-              <v-img src="https://i.pravatar.cc/900"></v-img>
+              <v-img
+                width="100"
+                :lazy-src="user.profic"
+                :src="user.profic"
+              ></v-img>
             </v-card>
             <v-container>
               <v-btn
-                v-if="resetPW == false"
-                @click="toggleEdit()"
-                color="primary"
-                absolute
-                icon
-                right
-              >
-                <v-icon>mdi-pencil</v-icon>
-              </v-btn>
-              <v-btn
-                v-else
+                v-if="resetPW === true"
                 @click="toggleReset()"
                 color="primary"
                 absolute
@@ -39,41 +34,6 @@
         <v-row>
           <v-col>
             <v-list>
-              <!-- Edit Mode -->
-              <v-list-item
-                v-if="editMode"
-                v-for="(item, key) in user"
-                :key="key"
-              >
-                <v-text-field v-model="user[key]" :label="key" clearable>
-                </v-text-field>
-              </v-list-item>
-              <v-container v-if="editMode">
-                <v-row>
-                  <v-col align="end">
-                    <v-btn
-                      @click="toggleEdit()"
-                      depressed
-                      outlined
-                      color="error"
-                    >
-                      <v-icon>mdi-close-thick</v-icon>
-                    </v-btn>
-                  </v-col>
-                  <v-col>
-                    <v-btn
-                      @click="newUserData()"
-                      depressed
-                      outlined
-                      color="success"
-                    >
-                      <v-icon>mdi-check-bold</v-icon>
-                    </v-btn>
-                  </v-col>
-                </v-row>
-              </v-container>
-
-              <!-- End of Edit Mode -->
               <!-- Reset Password Mode -->
               <v-list-item v-if="resetPW">
                 <v-container>
@@ -83,11 +43,11 @@
                         Masukkan password baru
                       </v-card-title>
                       <v-text-field
-                        v-model="password"
+                        v-model="user.password"
                         :type="hide ? 'password' : 'text'"
                         :rules="[
                           () =>
-                            password.length >= 8 ||
+                            user.password.length >= 8 ||
                             'Masukkan setidaknya 8 karakter!',
                         ]"
                         append-outer-icon="mdi-eye"
@@ -95,7 +55,7 @@
                       >
                       </v-text-field>
                       <v-row
-                        v-if="password.length >= 8 ? true : false"
+                        v-if="user.password.length >= 8 ? true : false"
                         class="mr-3"
                       >
                         <v-col>
@@ -127,7 +87,7 @@
               <!-- Normal Mode -->
               <v-list-item
                 v-if="editMode === false && resetPW === false"
-                v-for="(item, key) in user"
+                v-for="(item, key) in user.profile"
                 :key="key"
               >
                 <v-list-item-content
@@ -164,20 +124,20 @@
 </template>
 
 <script>
-import wave from '~/components/decoration/wave.vue'
 export default {
-  components: { wave },
   data() {
     return {
       hide: true,
       editMode: false,
       resetPW: false,
       user: {
-        name: '',
-        email: '',
+        profile: {
+          name: '',
+          email: '',
+        },
+        profic: require('@/static/images/admin.jpg'),
+        password: '',
       },
-      profpic: '',
-      password: '',
     }
   },
 
@@ -187,44 +147,23 @@ export default {
     toggleEdit() {
       this.editMode = !this.editMode
       this.resetPW = false
+      this.user.profile.name = this.$auth.user.name
+      this.user.profile.email = this.$auth.user.email
     },
 
     toggleReset() {
       this.resetPW = !this.resetPW
       this.editMode = false
-      this.password = ''
+      this.user.password = ''
     },
     async logout() {
       await this.$auth.logout('')
-      this.$toast.success('Berhasil logout!')
-    },
-
-    async newUserData() {
-      const params = new FormData()
-      params.append('name', this.user.name)
-      params.append('is_candidate', this.hide)
-      params.append('uri_profpic', this.profpic)
-
-      await this.$axios
-        .put(
-          '/users/me',
-          {
-            data: params,
-          },
-          { headers: { 'Content-Type': 'application/json' } }
-        )
-        .then((response) => {
-          console.log(response)
-        })
-        .catch((error) => {
-          console.log(error)
-        })
     },
 
     async newPW() {
       await this.$axios
-        .post('/users/reset-password', {
-          password: this.password,
+        .post('/api' + '/users/reset-password', {
+          password: this.user.password,
         })
         .then(() => {
           this.$toast.success('Sukses rubah password!')
@@ -237,9 +176,8 @@ export default {
   },
 
   mounted() {
-    this.user.name = this.$auth.user.name
-    this.user.email = this.$auth.user.email
-    this.profpic = this.$auth.user.uri_profic
+    this.user.profile.name = this.$auth.user.name
+    this.user.profile.email = this.$auth.user.email
   },
 }
 </script>

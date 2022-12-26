@@ -1,5 +1,6 @@
 export const state = () => {
   return {
+    show: false,
     drawer: [
       {
         name: 'Dashboard',
