@@ -7,7 +7,7 @@ export const state = () => {
 
 export const mutations = {
   getUserId(state, id) {
-    return (state.userId = id)
+    state.userId = id
   },
   returnPage(state, page) {
     return (state.page = page)

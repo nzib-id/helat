@@ -7,7 +7,7 @@
             {{ item.name }}
           </v-card-title>
           <v-card-title class="display-1 font-weight-bold">
-            <span>{{ item.value.toLocaleString('id') }}</span>
+            <span>{{ item.value }}</span>
           </v-card-title>
           <v-card-subtitle>{{ item.type }}</v-card-subtitle>
         </v-card>
@@ -38,6 +38,9 @@
             <v-tab-item transition="slide-x-transition">
               <PanitiaList height="200" />
             </v-tab-item>
+            <v-tab-item transition="slide-x-transition">
+              <PesertaList height="200" />
+            </v-tab-item>
           </v-tabs-items>
         </v-card>
       </v-col>
@@ -52,8 +55,9 @@
 
 <script>
 import statistikcard from '~/components/dashboard/statistikcard.vue'
-import EventOwnerList from '~/components/table/eventOwnerList.vue'
-import PanitiaList from '~/components/table/panitiaList.vue'
+import EventOwnerList from '~/components/eventowner/eventOwnerList.vue'
+import PanitiaList from '~/components/panitia/panitiaList.vue'
+import PesertaList from '~/components/peserta/pesertaList.vue'
 
 export default {
   name: 'IndexPage',
@@ -61,6 +65,7 @@ export default {
     statistikcard,
     EventOwnerList,
     PanitiaList,
+    PesertaList,
   },
   data() {
     return {
@@ -91,51 +96,63 @@ export default {
     }
   },
 
-  methods: {},
-
-  computed: {
+  methods: {
     async getEO() {
       try {
-        await this.$axios
-          .get('/api' + '/candidates/')
-          .then((response) => (this.items[0].value = response.data.count))
+        const { data } = await this.$axios.get(
+          '/api' + '/candidates/?skip=0&limit=99999'
+        )
+        this.items[0].value = data.count
       } catch (error) {
         console.log(error)
       }
     },
     async getPanitia() {
       try {
-        await this.$axios
-          .get('/api' + '/volunteer/')
-          .then((response) => (this.items[1].value = response.data.count))
+        const { data } = await this.$axios.get(
+          '/api' + '/volunteer/?skip=0&limit=99999'
+        )
+        this.items[1].value = data.count
       } catch (error) {
         console.log(error)
       }
     },
     async getPeserta() {
       try {
-        await this.$axios
-          .get('/api' + '/constituents/')
-          .then((response) => (this.items[2].value = response.data.count))
+        const { data } = await this.$axios.get(
+          '/api' + '/constituents/?skip=0&limit=99999'
+        )
+        this.items[2].value = data.count
       } catch (error) {
         console.log(error)
       }
     },
     async getEvent() {
       try {
-        await this.$axios
-          .get('/api' + '/campaigns/')
-          .then((response) => (this.items[3].value = response.data.count))
+        const { data } = await this.$axios.get(
+          '/api' + '/campaigns/?skip=0&limit=99999'
+        )
+        this.items[3].value = data.count
       } catch (error) {
         console.log(error)
       }
     },
   },
+
+  watch: {
+    totalEventOwner: {
+      handler() {
+        this.getEO()
+      },
+      deep: true,
+    },
+  },
+
   mounted() {
-    this.getEO
-    this.getPanitia
-    this.getPeserta
-    this.getEvent
+    this.getEO()
+    this.getPanitia()
+    this.getPeserta()
+    this.getEvent()
   },
 }
 </script>

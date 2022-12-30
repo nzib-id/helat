@@ -115,7 +115,9 @@
         </v-row>
         <v-row>
           <v-col align="center">
-            <v-btn @click="logout()" color="primary" outlined>Log out</v-btn>
+            <v-btn :loading="loading" @click="logout()" color="primary" outlined
+              >Log out</v-btn
+            >
           </v-col>
         </v-row>
       </v-container>
@@ -130,6 +132,7 @@ export default {
       hide: true,
       editMode: false,
       resetPW: false,
+      loading: false,
       user: {
         profile: {
           name: '',
@@ -157,7 +160,9 @@ export default {
       this.user.password = ''
     },
     async logout() {
+      this.loading = true
       await this.$auth.logout('')
+      this.loading = true
     },
 
     async newPW() {

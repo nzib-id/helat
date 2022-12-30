@@ -3,7 +3,7 @@
     <v-row class="">
       <v-card-title class="text-capitalize">
         <v-btn
-          to="/panitia"
+          to="/peserta"
           color="primary"
           small
           icon
@@ -13,7 +13,7 @@
           <v-icon>mdi-arrow-left-thick</v-icon>
         </v-btn>
 
-        {{ user.volunteer_name }}
+        {{ user.constituent_name }}
       </v-card-title>
     </v-row>
     <v-row>
@@ -29,7 +29,7 @@
           <v-list-item>
             <v-list-item-content>
               <v-card class="pa-2" outlined rounded="pill">
-                {{ user.nik }}
+                {{ user.address }}
               </v-card>
             </v-list-item-content>
           </v-list-item>
@@ -65,13 +65,11 @@ export default {
     }
   },
   methods: {
-    async getPanitiaDetail() {
+    async getPesertaDetail() {
       try {
         this.user = (
           await this.$axios.get(
-            '/api' +
-              '/volunteer/volunteer-userid/' +
-              this.$store.state.panitia.userId
+            '/api' + '/constituents/' + this.$store.state.peserta.userId
           )
         ).data
       } catch (error) {}
@@ -80,7 +78,7 @@ export default {
   computed: {},
 
   mounted() {
-    this.getPanitiaDetail()
+    this.getPesertaDetail()
   },
 }
 </script>
