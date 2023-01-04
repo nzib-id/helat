@@ -36,6 +36,7 @@ export default {
     '@nuxtjs/pwa',
     '@nuxtjs/proxy',
   ],
+
   proxy: {
     '/api': {
       target: 'https://event.pinisi.io',
