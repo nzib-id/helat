@@ -31,12 +31,7 @@
             <td>{{ index }}</td>
             <td>{{ index }}</td>
             <td>
-              <v-menu
-                nudge-right="9"
-                offset-x
-                rounded="lg"
-                content-class="elevation-0"
-              >
+              <v-menu nudge-right="5" offset-x content-class="elevation-1">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
                     retain-focus-on-click
@@ -49,15 +44,17 @@
                     <v-icon>mdi-dots-vertical</v-icon>
                   </v-btn>
                 </template>
-                <v-btn
-                  to="/panitia/detail"
-                  class="subtitle-2 text-capitalize font-weight-bold"
-                  depressed
-                  small
-                  color="primary"
-                >
-                  lihat detail</v-btn
-                >
+                <v-card>
+                  <v-btn
+                    to="/panitia/detail"
+                    class="subtitle-2 text-capitalize font-weight-bold"
+                    depressed
+                    small
+                    color="primary"
+                  >
+                    lihat detail</v-btn
+                  >
+                </v-card>
               </v-menu>
             </td>
           </tr>
@@ -67,6 +64,7 @@
     <v-pagination
       v-model="options.page"
       :length="options.pageCount"
+      total-visible="7"
     ></v-pagination>
   </div>
 </template>

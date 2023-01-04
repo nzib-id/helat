@@ -31,12 +31,7 @@
             <td>{{ index }}</td>
             <td>{{ index }}</td>
             <td>
-              <v-menu
-                nudge-right="9"
-                offset-x
-                rounded="lg"
-                content-class="elevation-0"
-              >
+              <v-menu nudge-right="5" offset-x content-class="elevation-1">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
                     @click="getUserId(index)"
@@ -125,7 +120,8 @@ export default {
     },
 
     getUserId(index) {
-      this.$store.commit('peserta/getUserId', this.peserta[index].id)
+      this.$store.commit('peserta/getConstituentId', this.peserta[index].id)
+      this.$store.commit('peserta/getUserId', this.peserta[index].user_id)
     },
   },
 

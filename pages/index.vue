@@ -13,11 +13,11 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-row class="ma-5">
+    <!-- <v-row class="ma-5">
       <v-col>
         <statistikcard />
       </v-col>
-    </v-row>
+    </v-row> -->
     <v-row class="ma-5">
       <v-col cols="8">
         <v-card class="py-3 px-2 text-capitalize" outlined>
@@ -33,13 +33,13 @@
           </v-tabs>
           <v-tabs-items v-model="tabs">
             <v-tab-item transition="slide-x-transition">
-              <EventOwnerList height="200" />
+              <EventOwnerList height="300" />
             </v-tab-item>
             <v-tab-item transition="slide-x-transition">
-              <PanitiaList height="200" />
+              <PanitiaList height="300" />
             </v-tab-item>
             <v-tab-item transition="slide-x-transition">
-              <PesertaList height="200" />
+              <PesertaList height="300" />
             </v-tab-item>
           </v-tabs-items>
         </v-card>

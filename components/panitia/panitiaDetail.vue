@@ -1,7 +1,7 @@
 <template>
-  <v-container>
-    <v-row class="">
-      <v-card-title class="text-capitalize">
+  <v-container class="pt-10">
+    <v-row>
+      <v-card-title class="text-capitalize text-h5 font-weight-bold">
         <v-btn
           to="/panitia"
           color="primary"
@@ -13,45 +13,39 @@
           <v-icon>mdi-arrow-left-thick</v-icon>
         </v-btn>
 
-        {{ user.volunteer_name }}
+        {{ user.name }}
       </v-card-title>
     </v-row>
     <v-row>
-      <v-col cols="5">
-        <v-list class="text-capitalize">
-          <v-list-item>
-            <v-list-item-content>
-              <v-card class="pa-2" outlined rounded="pill">
-                {{ user.place_of_birth }}, {{ user.date_of_birth }}
-              </v-card>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-content>
-              <v-card class="pa-2" outlined rounded="pill">
-                {{ user.nik }}
-              </v-card>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-content>
-              <v-card class="pa-2" outlined rounded="pill">
-                {{ user.gender }}
-              </v-card>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-col>
-      <v-col cols="3">
-        <v-card
-          :img="profic"
-          width="200"
-          height="250"
-          class="rounded-xl"
-          elevation="6"
-        >
-        </v-card>
-      </v-col>
+      <v-card class="d-flex ml-12 mt-2 pa-5" rounded="xl" width="600" outlined>
+        <v-col cols="6">
+          <v-list>
+            <v-list-item
+              class="body-1"
+              v-if="key != 'name'"
+              v-for="(item, key) in user"
+              :key="key"
+              style="border-bottom: 1px solid #ccc"
+            >
+              <v-list-item-content
+                class="overflow-visible"
+                v-if="key != 'gender'"
+              >
+                {{ item }}
+              </v-list-item-content>
+              <v-list-item-content v-if="key == 'gender'">
+                {{
+                  item == 'male' || item == 'pria' ? 'Laki-laki' : 'Perempuan'
+                }}
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-col>
+        <v-col cols="5 ml-9" full-height>
+          <v-card :img="profic" height="100%" class="rounded-xl" outlined>
+          </v-card>
+        </v-col>
+      </v-card>
     </v-row>
   </v-container>
 </template>
@@ -60,27 +54,46 @@
 export default {
   data() {
     return {
-      user: {},
+      user: {
+        nik: 0,
+        name: '',
+        ttl: '',
+        gender: '',
+        email: '',
+        phone: 0,
+      },
       profic: require('~/static/images/person.jpg'),
     }
   },
   methods: {
-    async getPanitiaDetail() {
+    async getPanitiaDetail1() {
       try {
-        this.user = (
-          await this.$axios.get(
-            '/api' +
-              '/volunteer/volunteer-userid/' +
-              this.$store.state.panitia.userId
-          )
-        ).data
+        const { data } = await this.$axios.get(
+          '/api' +
+            '/volunteer/volunteer-userid/' +
+            this.$store.state.panitia.userId
+        )
+        this.user.name = data.volunteer_name
+        this.user.nik = data.nik
+        this.user.ttl = data.place_of_birth + ',' + ' ' + data.date_of_birth
+        this.user.gender = data.gender
+        this.user.phone = data.cellphone
+      } catch (error) {}
+    },
+    async getPanitiaDetail2() {
+      try {
+        const { data } = await this.$axios.get(
+          '/api' + '/users/userid/' + this.$store.state.panitia.userId
+        )
+        this.user.email = data.email
       } catch (error) {}
     },
   },
   computed: {},
 
   mounted() {
-    this.getPanitiaDetail()
+    this.getPanitiaDetail1()
+    this.getPanitiaDetail2()
   },
 }
 </script>

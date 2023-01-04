@@ -31,7 +31,7 @@
             </v-container>
           </v-col>
         </v-row>
-        <v-row>
+        <v-row no-gutters>
           <v-col>
             <v-list>
               <!-- Reset Password Mode -->

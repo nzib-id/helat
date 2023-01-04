@@ -1,7 +1,8 @@
 <template>
   <div>
     <v-data-table
-      :options.sync="options"
+      :server-items-length="total.totalEventOwners"
+      :options="options"
       :headers="headers"
       :items="eventOwners"
       :height="height"
@@ -28,19 +29,51 @@
             </td>
             <td>{{ index }}</td>
             <td>{{ index }}</td>
-            <td>{{ item.is_active }}</td>
             <td>
-              <v-btn
-                class="subtitle-2 font-weight-bold text-capitalize"
-                :loading="btnLoading[index] || loading"
-                depressed
-                outlined
-                small
-                @click.prevent="approval(index, item.id)"
-                :color="item.is_active ? 'success' : 'rgb(175, 175, 175 )'"
-              >
-                {{ item.is_active ? 'Approved' : 'Unapproved' }}
-              </v-btn>
+              <v-menu auto rounded="lg" content-class="elevation-3">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    v-bind="attrs"
+                    v-on="on"
+                    :color="item.is_active ? 'success' : 'rgba(175,175,175)'"
+                    class="subtitle-2 font-weight-bold text-capitalize"
+                    :loading="btnLoading[index] || loading"
+                    depressed
+                    outlined
+                    small
+                  >
+                    {{ item.is_active ? 'Approved' : 'Unapproved' }}
+                  </v-btn>
+                </template>
+                <v-list class="px-0 py-2" dense>
+                  <v-list-item>
+                    <v-btn
+                      @click="approve(index, item.id)"
+                      color="success"
+                      class="subtitle-2 font-weight-bold text-capitalize"
+                      depressed
+                      outlined
+                      small
+                      block
+                    >
+                      Approve
+                    </v-btn>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-btn
+                      @click="unapprove(index, item.id)"
+                      color="error"
+                      class="subtitle-2 font-weight-bold text-capitalize"
+                      depressed
+                      outlined
+                      small
+                      block
+                    >
+                      Unapprove
+                    </v-btn>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
             </td>
             <td>
               <v-btn @click="" color="error" icon small>
@@ -58,7 +91,7 @@
     </v-data-table>
     <v-pagination
       v-model="options.page"
-      :length="options.pageCount"
+      :length="total.totalEventOwners"
       total-visible="7"
     ></v-pagination>
   </div>
@@ -80,11 +113,15 @@ export default {
       loading: false,
       btnLoading: [false],
       eventOwners: [],
-      totalEventOwners: 7,
-      userid: {},
+      total: {
+        totalEventOwners: 0,
+        totalEvents: [],
+        totalPrograms: [],
+        totalBudgets: [],
+      },
+
       options: {
         page: 0,
-        pageCount: 0,
         itemsPerPage: 5,
       },
       profic: require('~/static/images/person.jpg'),
@@ -92,7 +129,7 @@ export default {
         { text: 'nama', value: 'name' },
         { text: 'event', value: 'Event' },
         { text: 'program', value: 'Program' },
-        { text: 'budget', value: 'budget' },
+        // { text: 'budget', value: 'budget' },
         { text: 'status', value: 'is_active' },
         { text: '', value: '', sortable: false },
         { text: '', value: '', sortable: false },
@@ -101,6 +138,9 @@ export default {
   },
 
   methods: {
+    getIndex(index) {
+      console.log(index)
+    },
     async getDataEO() {
       try {
         this.loading = true
@@ -108,61 +148,73 @@ export default {
         this.$store.commit('eventOwner/returnPage', page)
         let skip = page * 5 - 5
 
-        await this.$axios
-          .get('/api' + '/candidates/?skip=' + skip + '&limit=' + itemsPerPage)
-          .then((response) => {
-            this.eventOwners = []
-            response.data.data.forEach(async (item) => {
-              const { data } = await this.$axios.get(
-                '/api' + '/users/userid/' + item.user_id
-              )
-              if (data != this.eventOwners) {
-                this.eventOwners.push(data)
-              }
-            })
-          })
+        const { data } = await this.$axios.get(
+          '/api' + '/candidates/?skip=' + skip + '&limit=' + itemsPerPage
+        )
+        this.eventOwners = []
+        data.data.forEach(async (item) => {
+          await this.$axios
+            .get('/api' + '/users/userid/' + item.user_id)
+            .then((response) => this.eventOwners.push(response.data))
+        })
+
         this.loading = false
       } catch (error) {
         console.log(error)
       }
     },
 
-    async getPageCount() {
+    async getTotalEO() {
       const { data } = await this.$axios.get(
         '/api' + '/candidates/?skip=0&limit=99999'
       )
-      this.totalEventOwners = data.count
-      this.options.pageCount = Math.ceil(
-        this.totalEventOwners / this.options.itemsPerPage
+      this.total.totalEventOwners = Math.ceil(
+        data.count / this.options.itemsPerPage
       )
     },
 
-    async approval(index, id) {
-      if (this.eventOwners[index].is_active === false) {
-        try {
-          this.btnLoading[index] = true
-          await this.$axios.put('/api' + '/users/activate/' + id, {
-            is_active: true,
-          })
-          this.eventOwners[index].is_active = true
-          this.btnLoading[index] = false
-        } catch (error) {
-          console.log(error)
-        }
-      } else if (this.eventOwners[index].is_active === true) {
-        try {
-          this.btnLoading[index] = true
-          await this.$axios.put('/api' + '/users/activate/' + id, {
-            is_active: false,
-          })
-          this.eventOwners[index].is_active = false
-          this.btnLoading[index] = false
-        } catch (error) {
-          console.log(error)
-        }
+    async getTotalEvent() {
+      try {
+        const { data } = await this.$axios.get(
+          '/api' +
+            '/campaigns/candidate/{user_id}?cand_user_id=' +
+            'D2b41fd4-97dd-44c3-Adb4-C0d0fe4dc7e7' +
+            '&skip=0&limit=9999'
+        )
+        console.log(data)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+
+    async approve(index, id) {
+      try {
+        this.btnLoading[index] = true
+        await this.$axios.put('/api' + '/users/activate/' + id, {
+          is_active: true,
+        })
+        this.eventOwners[index].is_active = true
+        this.btnLoading[index] = false
+      } catch (error) {
+        console.log(error)
+      }
+    },
+
+    async unapprove(index, id) {
+      try {
+        this.btnLoading[index] = true
+        await this.$axios.put('/api' + '/users/activate/' + id, {
+          is_active: false,
+        })
+        this.eventOwners[index].is_active = false
+        this.btnLoading[index] = false
+      } catch (error) {
+        console.log(error)
       }
     },
   },
+
+  computed: {},
 
   watch: {
     options: {
@@ -173,8 +225,9 @@ export default {
     },
   },
 
-  created() {
-    this.getPageCount()
+  mounted() {
+    this.getTotalEO()
+    this.getTotalEvent()
     this.options.page = this.$store.state.eventOwner.page
   },
 }
