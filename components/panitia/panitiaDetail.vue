@@ -91,7 +91,7 @@ export default {
   },
   computed: {},
 
-  mounted() {
+  created() {
     this.getPanitiaDetail1()
     this.getPanitiaDetail2()
   },

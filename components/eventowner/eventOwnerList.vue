@@ -27,7 +27,7 @@
                 {{ item.name }}
               </v-container>
             </td>
-            <td>{{ index }}</td>
+            <td>{{ item.event }}</td>
             <td>{{ index }}</td>
             <td>
               <v-menu auto rounded="lg" content-class="elevation-3">
@@ -110,6 +110,7 @@ export default {
   },
   data() {
     return {
+      index: 0,
       loading: false,
       btnLoading: [false],
       eventOwners: [],
@@ -139,7 +140,7 @@ export default {
 
   methods: {
     getIndex(index) {
-      console.log(index)
+      this.index = index
     },
     async getDataEO() {
       try {
@@ -154,8 +155,13 @@ export default {
         this.eventOwners = []
         data.data.forEach(async (item) => {
           await this.$axios
-            .get('/api' + '/users/userid/' + item.user_id)
-            .then((response) => this.eventOwners.push(response.data))
+            .get('/api' + '/users/userid/' + item.user_id, {
+              events: 'test',
+            })
+            .then((response) => {
+              this.eventOwners.push(response.data)
+              console.log(response.data)
+            })
         })
 
         this.loading = false
@@ -173,19 +179,19 @@ export default {
       )
     },
 
-    async getTotalEvent() {
-      try {
-        const { data } = await this.$axios.get(
-          '/api' +
-            '/campaigns/candidate/{user_id}?cand_user_id=' +
-            'D2b41fd4-97dd-44c3-Adb4-C0d0fe4dc7e7' +
-            '&skip=0&limit=9999'
-        )
-        console.log(data)
-      } catch (error) {
-        console.log(error)
-      }
-    },
+    // async getTotalEvent() {
+    //   try {
+    //     const { data } = await this.$axios.get(
+    //       '/api' +
+    //         '/campaigns/candidate/{user_id}?cand_user_id=' +
+    //         'd2b41fd4-97dd-44c3-adb4-c0d0fe4dc7e7' +
+    //         '&skip=0&limit=9999'
+    //     )
+    //     console.log(data)
+    //   } catch (error) {
+    //     console.log(error)
+    //   }
+    // },
 
     async approve(index, id) {
       try {
@@ -214,8 +220,6 @@ export default {
     },
   },
 
-  computed: {},
-
   watch: {
     options: {
       handler() {
@@ -227,7 +231,6 @@ export default {
 
   mounted() {
     this.getTotalEO()
-    this.getTotalEvent()
     this.options.page = this.$store.state.eventOwner.page
   },
 }

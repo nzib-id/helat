@@ -83,7 +83,7 @@ export default {
           type: 'Bearer',
           required: true,
           global: true,
-          maxAge: 1800,
+          maxAge: 3600,
         },
         endpoints: {
           login: {
