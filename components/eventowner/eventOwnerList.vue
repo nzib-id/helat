@@ -1,8 +1,8 @@
 <template>
   <div>
     <v-data-table
-      :server-items-length="total.totalEventOwners"
-      :options="options"
+      :server-items-length="totalEventOwners"
+      :options.sync="options"
       :headers="headers"
       :items="eventOwners"
       :height="height"
@@ -28,7 +28,7 @@
               </v-container>
             </td>
             <td>{{ item.event }}</td>
-            <td>{{ index }}</td>
+            <td>{{ item.event }}</td>
             <td>
               <v-menu auto rounded="lg" content-class="elevation-3">
                 <template v-slot:activator="{ on, attrs }">
@@ -91,7 +91,7 @@
     </v-data-table>
     <v-pagination
       v-model="options.page"
-      :length="total.totalEventOwners"
+      :length="totalEventOwners"
       total-visible="7"
     ></v-pagination>
   </div>
@@ -114,13 +114,7 @@ export default {
       loading: false,
       btnLoading: [false],
       eventOwners: [],
-      total: {
-        totalEventOwners: 0,
-        totalEvents: [],
-        totalPrograms: [],
-        totalBudgets: [],
-      },
-
+      totalEventOwners: 0,
       options: {
         page: 0,
         itemsPerPage: 5,
@@ -139,31 +133,32 @@ export default {
   },
 
   methods: {
-    getIndex(index) {
-      this.index = index
-    },
     async getDataEO() {
       try {
         this.loading = true
+        let eventOwners = []
         const { itemsPerPage, page } = this.options
         this.$store.commit('eventOwner/returnPage', page)
         let skip = page * 5 - 5
-
         const { data } = await this.$axios.get(
           '/api' + '/candidates/?skip=' + skip + '&limit=' + itemsPerPage
         )
-        this.eventOwners = []
-        data.data.forEach(async (item) => {
+        data.data.forEach(async (item, index) => {
           await this.$axios
-            .get('/api' + '/users/userid/' + item.user_id, {
-              events: 'test',
-            })
-            .then((response) => {
-              this.eventOwners.push(response.data)
-              console.log(response.data)
+            .get('/api' + '/users/userid/' + item.user_id)
+            .then(async (response) => {
+              eventOwners.push(response.data)
+              const res = await this.$axios.get(
+                '/api' +
+                  '/campaigns/candidate/{user_id}?cand_user_id=' +
+                  response.data.id +
+                  '&skip=0&limit=99999'
+              )
+              eventOwners[index].event = res.data.count
             })
         })
-
+        this.eventOwners = eventOwners
+        console.log(this.eventOwners)
         this.loading = false
       } catch (error) {
         console.log(error)
@@ -174,24 +169,8 @@ export default {
       const { data } = await this.$axios.get(
         '/api' + '/candidates/?skip=0&limit=99999'
       )
-      this.total.totalEventOwners = Math.ceil(
-        data.count / this.options.itemsPerPage
-      )
+      this.totalEventOwners = Math.ceil(data.count / this.options.itemsPerPage)
     },
-
-    // async getTotalEvent() {
-    //   try {
-    //     const { data } = await this.$axios.get(
-    //       '/api' +
-    //         '/campaigns/candidate/{user_id}?cand_user_id=' +
-    //         'd2b41fd4-97dd-44c3-adb4-c0d0fe4dc7e7' +
-    //         '&skip=0&limit=9999'
-    //     )
-    //     console.log(data)
-    //   } catch (error) {
-    //     console.log(error)
-    //   }
-    // },
 
     async approve(index, id) {
       try {
