@@ -28,7 +28,7 @@
               </v-container>
             </td>
             <td>{{ item.event }}</td>
-            <td>{{ item.event }}</td>
+            <td>{{ index }}</td>
             <td>
               <v-menu auto rounded="lg" content-class="elevation-3">
                 <template v-slot:activator="{ on, attrs }">
@@ -110,7 +110,6 @@ export default {
   },
   data() {
     return {
-      index: 0,
       loading: false,
       btnLoading: [false],
       eventOwners: [],
@@ -122,8 +121,8 @@ export default {
       profic: require('~/static/images/person.jpg'),
       headers: [
         { text: 'nama', value: 'name' },
-        { text: 'event', value: 'Event' },
-        { text: 'program', value: 'Program' },
+        { text: 'event', value: 'event' },
+        { text: 'program', value: 'program' },
         // { text: 'budget', value: 'budget' },
         { text: 'status', value: 'is_active' },
         { text: '', value: '', sortable: false },
@@ -143,6 +142,7 @@ export default {
         const { data } = await this.$axios.get(
           '/api' + '/candidates/?skip=' + skip + '&limit=' + itemsPerPage
         )
+
         data.data.forEach(async (item, index) => {
           await this.$axios
             .get('/api' + '/users/userid/' + item.user_id)
@@ -154,12 +154,13 @@ export default {
                   response.data.id +
                   '&skip=0&limit=99999'
               )
-              eventOwners[index].event = res.data.count
+              eventOwners[index]['event'] = res.data.count
             })
         })
-        this.eventOwners = eventOwners
-        console.log(this.eventOwners)
-        this.loading = false
+        setTimeout(() => {
+          this.eventOwners = eventOwners
+          this.loading = false
+        }, 2000)
       } catch (error) {
         console.log(error)
       }

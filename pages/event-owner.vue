@@ -13,7 +13,6 @@ export default {
   data() {
     return {
       title: 'Event Owner',
-      data: [],
     }
   },
   components: {

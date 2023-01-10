@@ -58,13 +58,13 @@
     <v-slide-y-transition>
       <v-row v-if="show" class="mx-6 mt-5 d-flex flex-column">
         <v-card
-          v-for="(item, key, index) in event"
+          v-for="(item, index) in event"
           class="mb-5"
           width="500"
           rounded="xl"
           elevation="2"
           to="#"
-          :key="key"
+          :key="index"
           :ripple="false"
         >
           <v-card-title class="subtitle-1"> {{ item.name }} </v-card-title>
