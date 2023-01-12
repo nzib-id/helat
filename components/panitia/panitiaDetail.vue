@@ -19,7 +19,14 @@
     <v-row>
       <v-card class="d-flex ml-12 mt-2 pa-5" rounded="xl" width="600" outlined>
         <v-col cols="6">
-          <v-list>
+          <v-skeleton-loader
+            v-if="loading"
+            class="mx-auto"
+            max-width="300"
+            type="list-item-two-line, list-item-three-line"
+          >
+          </v-skeleton-loader>
+          <v-list v-else>
             <v-list-item
               class="body-1"
               v-if="key != 'name'"
@@ -54,6 +61,7 @@
 export default {
   data() {
     return {
+      loading: false,
       user: {
         nik: 0,
         name: '',
@@ -66,34 +74,37 @@ export default {
     }
   },
   methods: {
-    async getPanitiaDetail1() {
+    async getPanitiaDetail() {
       try {
-        const { data } = await this.$axios.get(
+        this.loading = true
+        const data1 = await this.$axios.get(
           '/api' +
             '/volunteer/volunteer-userid/' +
             this.$store.state.panitia.userId
         )
-        this.user.name = data.volunteer_name
-        this.user.nik = data.nik
-        this.user.ttl = data.place_of_birth + ',' + ' ' + data.date_of_birth
-        this.user.gender = data.gender
-        this.user.phone = data.cellphone
-      } catch (error) {}
-    },
-    async getPanitiaDetail2() {
-      try {
-        const { data } = await this.$axios.get(
+        const data2 = await this.$axios.get(
           '/api' + '/users/userid/' + this.$store.state.panitia.userId
         )
-        this.user.email = data.email
-      } catch (error) {}
+
+        console.log(data1.data)
+
+        this.user.name = data1.data.volunteer_name
+        this.user.nik = data1.data.nik
+        this.user.ttl =
+          data1.data.place_of_birth + ',' + ' ' + data1.data.date_of_birth
+        this.user.gender = data1.data.gender
+        this.user.phone = data1.data.cellphone
+        this.user.email = data2.data.email
+        this.loading = false
+      } catch (error) {
+        console.log(error)
+      }
     },
   },
   computed: {},
 
   created() {
-    this.getPanitiaDetail1()
-    this.getPanitiaDetail2()
+    this.getPanitiaDetail()
   },
 }
 </script>

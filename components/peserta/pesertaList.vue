@@ -59,10 +59,7 @@
         </tbody>
       </template>
     </v-data-table>
-    <v-pagination
-      v-model="options.page"
-      :length="options.pageCount"
-    ></v-pagination>
+    <v-pagination v-model="options.page" :length="totalPeserta"></v-pagination>
   </div>
 </template>
 
@@ -78,7 +75,6 @@ export default {
       peserta: [],
       options: {
         page: 1,
-        pageCount: 0,
         itemsPerPage: 5,
       },
       profic: require('~/static/images/person.jpg'),
@@ -95,28 +91,28 @@ export default {
   methods: {
     async getPesertaList() {
       try {
-        this.getPageCount()
         this.loading = true
+
+        const { data } = await this.$axios.get(
+          '/api' + '/constituents/?skip=0&limit=99999'
+        )
+        this.totalPeserta = Math.ceil(data.count / this.options.itemsPerPage)
+
         const { itemsPerPage, page } = this.options
         this.$store.commit('peserta/returnPage', page)
         let skip = page * 5 - 5
-        const { data } = await this.$axios.get(
-          '/api' + '/constituents/?skip=' + skip + '&limit=' + itemsPerPage
-        )
 
-        this.peserta = data.data
-        this.loading = false
-      } catch (error) {}
-    },
-
-    async getPageCount() {
-      const { data } = await this.$axios.get(
-        '/api' + '/constituents/?skip=0&limit=99999'
-      )
-      this.totalPeserta = data.count
-      this.options.pageCount = Math.ceil(
-        this.totalPeserta / this.options.itemsPerPage
-      )
+        await this.$axios
+          .get(
+            '/api' + '/constituents/?skip=' + skip + '&limit=' + itemsPerPage
+          )
+          .then((response) => {
+            this.peserta = response.data.data
+            this.loading = false
+          })
+      } catch (error) {
+        console.log(error)
+      }
     },
 
     getUserId(index) {

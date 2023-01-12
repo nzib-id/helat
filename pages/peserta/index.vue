@@ -4,13 +4,13 @@
       <v-row>
         <v-card class="py-3 px-2 text-capitalize" outlined>
           <v-card-title> Peserta </v-card-title>
-          <pesertaList />
+          <pesertaList height="330" />
         </v-card>
       </v-row>
       <v-row class="mt-9">
         <v-card class="d-flex" @click="show = !show" :ripple="false">
           <v-card-title class="text-capitalize text-h5 font-weight-bold">
-            Program aktif
+            Program
           </v-card-title>
           <v-icon absolute right> mdi-chevron-down</v-icon>
         </v-card>
@@ -24,7 +24,7 @@
 
 <script>
 import pesertaList from '~/components/peserta/pesertaList.vue'
-import programList from '~/components/peserta/programList.vue'
+import programList from '~/components/program/programList.vue'
 export default {
   components: { pesertaList, programList },
   data() {

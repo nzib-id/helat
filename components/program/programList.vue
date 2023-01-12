@@ -11,18 +11,30 @@
         </v-card>
       </v-col>
       <v-col v-else cols="3" v-for="(item, index) in programList" :key="index">
-        <v-card
-          class="mb-5 pa-5"
-          style="border-left: 6px solid #eb4335"
-          elevation="2"
-          to="#"
-          :ripple="false"
-        >
-          <v-card-title class="text-capitalize">
-            {{ item.program_name }}
-          </v-card-title>
-          <v-card-text>{{ item.candidate_name }}</v-card-text>
-        </v-card>
+        <v-hover>
+          <template v-slot:default="{ hover }">
+            <v-card
+              @click="getProgramId(item.id)"
+              class="pa-5 d-flex flex-column justify-center"
+              :hover="true"
+              height="175"
+              :elevation="hover ? 6 : 3"
+              to="/program"
+              :ripple="false"
+              rounded="lg"
+            >
+              <v-card-title
+                class="subtitle-1 font-weight-medium text-capitalize"
+              >
+                {{ item.program_name }}
+              </v-card-title>
+              <v-card-text>{{ item.candidate_name }}</v-card-text>
+              <v-btn color="primary" icon absolute large outlined bottom right>
+                <v-icon>mdi-chevron-right</v-icon>
+              </v-btn>
+            </v-card>
+          </template>
+        </v-hover>
       </v-col>
     </v-row>
   </v-container>
@@ -33,6 +45,7 @@ export default {
   data() {
     return {
       programList: [],
+      programId: '',
       loading: false,
     }
   },
@@ -55,6 +68,9 @@ export default {
       } catch (error) {
         console.log(error)
       }
+    },
+    getProgramId(id) {
+      this.$store.commit('program/getProgramId', id)
     },
   },
 

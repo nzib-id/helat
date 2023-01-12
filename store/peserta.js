@@ -13,6 +13,7 @@ export const mutations = {
   getConstituentId(state, id) {
     state.id = id
   },
+
   returnPage(state, page) {
     return (state.page = page)
   },

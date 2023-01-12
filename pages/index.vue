@@ -33,13 +33,13 @@
           </v-tabs>
           <v-tabs-items v-model="tabs">
             <v-tab-item transition="slide-x-transition">
-              <EventOwnerList height="300" />
+              <EventOwnerList height="250" />
             </v-tab-item>
             <v-tab-item transition="slide-x-transition">
-              <PanitiaList height="300" />
+              <PanitiaList height="250" />
             </v-tab-item>
             <v-tab-item transition="slide-x-transition">
-              <PesertaList height="300" />
+              <PesertaList height="250" />
             </v-tab-item>
           </v-tabs-items>
         </v-card>

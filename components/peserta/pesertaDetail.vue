@@ -13,17 +13,24 @@
           <v-icon>mdi-arrow-left-thick</v-icon>
         </v-btn>
 
-        {{ user.name }}
+        {{ peserta.name }}
       </v-card-title>
     </v-row>
     <v-row>
       <v-card class="d-flex ml-12 mt-2 pa-5" rounded="xl" width="600" outlined>
         <v-col cols="6">
-          <v-list>
+          <v-skeleton-loader
+            v-if="loading"
+            class="mx-auto"
+            max-width="300"
+            type="list-item-two-line, list-item-three-line"
+          >
+          </v-skeleton-loader>
+          <v-list v-else>
             <v-list-item
               class="body-1"
               v-if="key != 'name'"
-              v-for="(item, key) in user"
+              v-for="(item, key) in peserta.detail"
               :key="key"
               style="border-bottom: 1px solid #ccc"
             >
@@ -80,14 +87,8 @@ export default {
   data() {
     return {
       show: false,
-      user: {
-        nik: 0,
-        name: '',
-        ttl: '',
-        gender: '',
-        email: '',
-        phone: 0,
-      },
+      loading: false,
+      peserta: {},
       event: [
         { name: 'Jalan Kayang', eo: 'Dadang Kurniawan' },
         { name: 'Jalan Ngelayang', eo: 'Jujun Junaedi' },
@@ -97,34 +98,38 @@ export default {
     }
   },
   methods: {
-    async getPesertaDetail1() {
+    async getPesertaDetail() {
       try {
+        this.loading = true
         const { data } = await this.$axios.get(
           '/api' + '/constituents/' + this.$store.state.peserta.id
         )
-        this.user.name = data.constituent_name
-        this.user.nik = data.nik
-        this.user.ttl = data.place_of_birth + ',' + ' ' + data.date_of_birth
-        this.user.gender = data.gender
-        this.user.phone = data.cellphone
-        this.userId = data.user_id
-      } catch (error) {}
-    },
+        console.log(data)
 
-    async getPesertaDetail2() {
-      try {
-        const { data } = await this.$axios.get(
+        const data2 = await this.$axios.get(
           '/api' + '/users/userid/' + this.$store.state.peserta.userId
         )
-        this.user.email = data.email
+        console.log(data2)
+
+        this.peserta = {
+          name: data.constituent_name,
+          userId: data.user_id,
+          detail: {
+            nik: data.nik,
+            ttl: data.place_of_birth + ',' + ' ' + data.date_of_birth,
+            gender: data.gender,
+            email: data2.data.email,
+            phone: data.cellphone,
+          },
+        }
+        this.loading = false
       } catch (error) {}
     },
   },
   computed: {},
 
   mounted() {
-    this.getPesertaDetail1()
-    this.getPesertaDetail2()
+    this.getPesertaDetail()
   },
 }
 </script>
